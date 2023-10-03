@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers
 
-import 'package:alertify/views/Homepage.dart';
 import 'package:alertify/views/Signuppage.dart';
 import 'package:alertify/views/detailform.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,15 +17,24 @@ class _LoginPageState extends State<LoginPage> {
   bool isLoggedIn = false;
 
   Future<void> login() async {
-  // Simulate a login process
-  await Future.delayed(Duration(seconds: 2));
-  isLoggedIn = true;
-}
+    // Simulate a login process
+    await Future.delayed(Duration(seconds: 2));
+    isLoggedIn = true;
+  }
 
- FirebaseAuth auth = FirebaseAuth.instance;
+  FirebaseAuth auth = FirebaseAuth.instance;
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
- GlobalKey<FormState> globalKey = GlobalKey<FormState>();
+  GlobalKey<FormState> globalKey = GlobalKey<FormState>();
+
+  Future<void> resetPassword(String email) async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,56 +72,62 @@ class _LoginPageState extends State<LoginPage> {
                   Padding(
                     padding: const EdgeInsets.only(left: 320, top: 290),
                     child: Container(
-                      height: 40,
-                      width: MediaQuery.sizeOf(context).width * 0.2,
-                      decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 151, 210, 255),
-                          borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(50),
-                              topLeft: Radius.circular(50))),
-                      child: Row(children: [
-                        SizedBox(width: 20,),
-                          CircleAvatar(
-                                radius: 15,
-                                backgroundColor: Colors.white,
-                                child: Icon(
-                                    CupertinoIcons.arrow_left,
-                                    size: 20,
-                                  ),
+                        height: 40,
+                        width: MediaQuery.sizeOf(context).width * 0.2,
+                        decoration: BoxDecoration(
+                            color: Color.fromARGB(255, 151, 210, 255),
+                            borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(50),
+                                topLeft: Radius.circular(50))),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 20,
+                            ),
+                            CircleAvatar(
+                              radius: 15,
+                              backgroundColor: Colors.white,
+                              child: Icon(
+                                CupertinoIcons.arrow_left,
+                                size: 20,
                               ),
-                       
-
-                      ],)
-                    ),
-                  )
-,
-                   Padding(
+                            ),
+                          ],
+                        )),
+                  ),
+                  Padding(
                     padding: const EdgeInsets.only(right: 200, top: 290),
                     child: Container(
-                      height: 40,
-                      width: MediaQuery.sizeOf(context).width * 0.49,
-                      decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 151, 210, 255),
-                          borderRadius: BorderRadius.only(
-                              bottomRight: Radius.circular(50),
-                              topRight: Radius.circular(50))),
-                      child: Row(children: [
-                         SizedBox(width: 20,),
-                             Text("LOGIN" ,style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
-                        SizedBox(width: 20,),
-                        
-                          CircleAvatar(
-                                radius: 15,
-                                backgroundColor: Colors.white,
-                                child: Icon(
-                                    CupertinoIcons.arrow_left,
-                                    size: 20,
-                                  ),
+                        height: 40,
+                        width: MediaQuery.sizeOf(context).width * 0.49,
+                        decoration: BoxDecoration(
+                            color: Color.fromARGB(255, 151, 210, 255),
+                            borderRadius: BorderRadius.only(
+                                bottomRight: Radius.circular(50),
+                                topRight: Radius.circular(50))),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 20,
+                            ),
+                            Text(
+                              "LOGIN",
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(
+                              width: 20,
+                            ),
+                            CircleAvatar(
+                              radius: 15,
+                              backgroundColor: Colors.white,
+                              child: Icon(
+                                CupertinoIcons.arrow_left,
+                                size: 20,
                               ),
-                         
-
-                      ],)
-                    ),
+                            ),
+                          ],
+                        )),
                   )
                 ],
               ),
@@ -121,20 +135,17 @@ class _LoginPageState extends State<LoginPage> {
             Padding(
               padding: const EdgeInsets.all(30.0),
               child: Form(
-                 key: globalKey,
-
+                key: globalKey,
                 child: Column(children: [
                   TextFormField(
-                      validator: (value){
-                  if(value==null || value.isEmpty)
-                  {
-                    return "This field is required";
-                  }
-                  else{
-                    return null;
-                  }
-                },
-                controller: emailController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "This field is required";
+                      } else {
+                        return null;
+                      }
+                    },
+                    controller: emailController,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(
                             borderRadius:
@@ -150,21 +161,16 @@ class _LoginPageState extends State<LoginPage> {
                     height: 30,
                   ),
                   TextFormField(
-                     validator: (value){
-                  if(value==null || value.isEmpty)
-                  {
-                    return "This field is required";
-                  }
-                  else if(value.length<=6)
-                  {
-                    return "Too short password";
-                  }
-                  else{
-                    return null;
-                  }
-                },
-                controller: passwordController,
-                    
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "This field is required";
+                      } else if (value.length <= 6) {
+                        return "Too short password";
+                      } else {
+                        return null;
+                      }
+                    },
+                    controller: passwordController,
                     obscureText: true,
                     obscuringCharacter: "X",
                     decoration: InputDecoration(
@@ -198,20 +204,28 @@ class _LoginPageState extends State<LoginPage> {
                               fontWeight: FontWeight.bold),
                         ),
                         onPressed: () {
-
-                           if(globalKey.currentState!.validate())
-                  {
-                    auth.signInWithEmailAndPassword(
-                      email: emailController.text.toString(),
-                      password: passwordController.text.toString(),
-                    ).then((value){
-                      
-                      Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => HomePage(),));
-                    },).onError((error, stackTrace){
-                      SnackBar(content: Text("Login Failed"),);
-                    },);
-                  }
-                         
+                          if (globalKey.currentState!.validate()) {
+                            auth
+                                .signInWithEmailAndPassword(
+                              email: emailController.text.toString(),
+                              password: passwordController.text.toString(),
+                            )
+                                .then(
+                              (value) {
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => DetailForm(),
+                                    ));
+                              },
+                            ).onError(
+                              (error, stackTrace) {
+                                SnackBar(
+                                  content: Text("Login Failed"),
+                                );
+                              },
+                            );
+                          }
                         },
                       ),
                     ),
@@ -222,7 +236,11 @@ class _LoginPageState extends State<LoginPage> {
                   Padding(
                     padding: const EdgeInsets.only(right: 200),
                     child: GestureDetector(
-                        onTap: () => (),
+                        onTap: () async {
+                          String email =
+                              emailController.text.toString(); // Replace with the user's email address
+                          await resetPassword(email);
+                        },
                         child: Text(
                           "Forgot Password ?",
                           style: TextStyle(fontWeight: FontWeight.bold),
