@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers
 
+import 'package:alertify/views/Homepage.dart';
 import 'package:alertify/views/Signuppage.dart';
 import 'package:alertify/views/detailform.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -13,6 +15,18 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  bool isLoggedIn = false;
+
+  Future<void> login() async {
+  // Simulate a login process
+  await Future.delayed(Duration(seconds: 2));
+  isLoggedIn = true;
+}
+
+ FirebaseAuth auth = FirebaseAuth.instance;
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+ GlobalKey<FormState> globalKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -107,14 +121,26 @@ class _LoginPageState extends State<LoginPage> {
             Padding(
               padding: const EdgeInsets.all(30.0),
               child: Form(
+                 key: globalKey,
+
                 child: Column(children: [
                   TextFormField(
+                      validator: (value){
+                  if(value==null || value.isEmpty)
+                  {
+                    return "This field is required";
+                  }
+                  else{
+                    return null;
+                  }
+                },
+                controller: emailController,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(
                             borderRadius:
                                 BorderRadius.all(Radius.circular(12))),
-                        hintText: 'USERNAME',
-                        label: Text("UserName"),
+                        hintText: 'Email',
+                        label: Text("UserEmail"),
                         prefixIcon: Icon(
                           Icons.person_outline_outlined,
                           color: Colors.black,
@@ -124,6 +150,21 @@ class _LoginPageState extends State<LoginPage> {
                     height: 30,
                   ),
                   TextFormField(
+                     validator: (value){
+                  if(value==null || value.isEmpty)
+                  {
+                    return "This field is required";
+                  }
+                  else if(value.length<=6)
+                  {
+                    return "Too short password";
+                  }
+                  else{
+                    return null;
+                  }
+                },
+                controller: passwordController,
+                    
                     obscureText: true,
                     obscuringCharacter: "X",
                     decoration: InputDecoration(
@@ -157,11 +198,20 @@ class _LoginPageState extends State<LoginPage> {
                               fontWeight: FontWeight.bold),
                         ),
                         onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => DetailForm(),
-                              ));
+
+                           if(globalKey.currentState!.validate())
+                  {
+                    auth.signInWithEmailAndPassword(
+                      email: emailController.text.toString(),
+                      password: passwordController.text.toString(),
+                    ).then((value){
+                      
+                      Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => HomePage(),));
+                    },).onError((error, stackTrace){
+                      SnackBar(content: Text("Login Failed"),);
+                    },);
+                  }
+                         
                         },
                       ),
                     ),

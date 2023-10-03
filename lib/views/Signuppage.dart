@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 import 'package:alertify/views/LoginPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +12,10 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  FirebaseAuth auth = FirebaseAuth.instance;
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  GlobalKey<FormState> globalKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,6 +115,7 @@ class _SignUpPageState extends State<SignUpPage> {
             Padding(
               padding: const EdgeInsets.all(30.0),
               child: Form(
+                key: globalKey,
                 child: Column(children: [
                   TextFormField(
                     decoration: InputDecoration(
@@ -127,6 +133,39 @@ class _SignUpPageState extends State<SignUpPage> {
                     height: 20,
                   ),
                   TextFormField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "This field is required";
+                      } else {
+                        return null;
+                      }
+                    },
+                    controller: emailController,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(12))),
+                        hintText: 'E-MAIL',
+                        label: Text("Email"),
+                        prefixIcon: Icon(
+                          Icons.email_outlined,
+                          color: Colors.black,
+                        )),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  TextFormField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "This field is required";
+                      } else if (value.length <= 6) {
+                        return "Too short password";
+                      } else {
+                        return null;
+                      }
+                    },
+                    controller: passwordController,
                     obscureText: true,
                     obscuringCharacter: "X",
                     decoration: InputDecoration(
@@ -137,21 +176,6 @@ class _SignUpPageState extends State<SignUpPage> {
                         label: Text("Password"),
                         prefixIcon: Icon(
                           Icons.key_outlined,
-                          color: Colors.black,
-                        )),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(12))),
-                        hintText: 'E-MAIL',
-                        label: Text("Email"),
-                        prefixIcon: Icon(
-                          Icons.email_outlined,
                           color: Colors.black,
                         )),
                   ),
@@ -174,7 +198,30 @@ class _SignUpPageState extends State<SignUpPage> {
                               color: const Color.fromARGB(255, 255, 255, 255),
                               fontWeight: FontWeight.bold),
                         ),
-                        onPressed: () => (),
+                        onPressed: () {
+                          if (globalKey.currentState!.validate()) {
+                            auth
+                                .createUserWithEmailAndPassword(
+                                    email: emailController.text.toString(),
+                                    password:
+                                        passwordController.text.toString())
+                                .then(
+                              (value) {
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => LoginPage(),
+                                    ));
+                              },
+                            ).onError(
+                              (error, stackTrace) {
+                                SnackBar(
+                                  content: Text("Login Failed"),
+                                );
+                              },
+                            );
+                          }
+                        },
                       ),
                     ),
                   ),

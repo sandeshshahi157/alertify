@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "734480602825",
+    "project_id": "alertify-717e8",
+    "storage_bucket": "alertify-717e8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:734480602825:android:dc63b73854322881885f18",
+        "android_client_info": {
+          "package_name": "com.example.alertify"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0mKE52CJGhvd926auF1DJgKKF_2oKN5w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
