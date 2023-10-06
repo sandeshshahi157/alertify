@@ -3,8 +3,12 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:alertify/views/Homepage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
  class DetailForm extends StatefulWidget {
   const DetailForm({super.key});
@@ -14,6 +18,13 @@ import 'package:flutter/material.dart';
 }
 
 class _DetailFormState extends State<DetailForm> {
+    FirebaseAuth auth = FirebaseAuth.instance;
+      GlobalKey<FormState> globalKey = GlobalKey<FormState>();
+  TextEditingController fullName = TextEditingController();
+   TextEditingController semester = TextEditingController();
+    TextEditingController branch = TextEditingController();
+     TextEditingController totalSubject = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -106,14 +117,25 @@ class _DetailFormState extends State<DetailForm> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal:30.0),
               child: Form(
+                 key: globalKey,
                 child: Column(children: [
                   TextFormField(
+                   
+                     validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "This field is required";
+                      } else {
+                        return null;
+                      }
+                     },
+    
+                    controller: fullName,
                     decoration: InputDecoration(
                         prefixIcon: Icon(Icons.abc,color: Colors.black,),
                         border: OutlineInputBorder(
                             borderRadius:
                                 BorderRadius.all(Radius.circular(12))),
-                        hintText: 'USERNAME',
+                        hintText: 'Full Name ',
                         
                       
                      ),
@@ -122,6 +144,15 @@ class _DetailFormState extends State<DetailForm> {
                     height: 20,
                   ),
                   TextFormField(
+                     
+                     validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "This field is required";
+                      } else {
+                        return null;
+                      }
+                     },
+                    controller: semester,
 
                     decoration: InputDecoration(
                          prefixIcon: Icon(Icons.yard,color: Colors.black,),
@@ -135,6 +166,15 @@ class _DetailFormState extends State<DetailForm> {
                     height: 20,
                   ),
                   TextFormField(
+                        validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "This field is required";
+                      } else {
+                        return null;
+                      }
+                        },
+    
+                    controller: branch,
                     decoration: InputDecoration(
                           prefixIcon: Icon(Icons.energy_savings_leaf,color: Colors.black,),
                         border: OutlineInputBorder(
@@ -147,6 +187,14 @@ class _DetailFormState extends State<DetailForm> {
                     height: 20,
                   ),
                    TextFormField(
+                        validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "This field is required";
+                      } else {
+                        return null;
+                      }
+                        },
+                    controller: totalSubject,
                     decoration: InputDecoration(
                        prefixIcon: Icon(Icons.book,color: Colors.black,),
                         border: OutlineInputBorder(
@@ -176,7 +224,22 @@ class _DetailFormState extends State<DetailForm> {
                               fontWeight: FontWeight.bold),
                         ),
                         onPressed: () {
-                          Navigator.push(context,MaterialPageRoute(builder: (context) => HomePage(),));
+                          
+                         if(globalKey.currentState!.validate())
+                         {
+                            CollectionReference collRef =
+                                  FirebaseFirestore.instance.collection('User');
+                              collRef.add({
+                                'FullName': fullName.text.toString(),
+                                'Semester':semester.text.toString(),
+                                'Branch': branch.text.toString(),
+                                'Totalsubject': totalSubject.text.toString()
+                                
+                              });
+                      
+                            Navigator.push(context,MaterialPageRoute(builder: (context) => HomePage(),));
+                        
+                         }
                         },
                       ),
                     ),

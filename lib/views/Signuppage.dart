@@ -1,8 +1,9 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
 import 'package:alertify/views/LoginPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -13,12 +14,14 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   FirebaseAuth auth = FirebaseAuth.instance;
+  TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   GlobalKey<FormState> globalKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -52,7 +55,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   Padding(
                     padding: const EdgeInsets.only(left: 200, top: 290),
                     child: Container(
-                        height: 40,
+                        height: MediaQuery.sizeOf(context).height * 0.05,
                         width: MediaQuery.sizeOf(context).width * 0.49,
                         decoration: BoxDecoration(
                             color: Color.fromARGB(255, 151, 210, 255),
@@ -62,18 +65,27 @@ class _SignUpPageState extends State<SignUpPage> {
                         child: Row(
                           children: [
                             SizedBox(
-                              width: 20,
+                              width: MediaQuery.sizeOf(context).width * 0.08,
                             ),
                             CircleAvatar(
                               radius: 15,
                               backgroundColor: Colors.white,
-                              child: Icon(
-                                CupertinoIcons.arrow_left,
-                                size: 20,
+                              child: IconButton(
+                                icon: Icon(
+                                  CupertinoIcons.arrow_left,
+                                  size: 20,
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => LoginPage(),
+                                      ));
+                                },
                               ),
                             ),
                             SizedBox(
-                              width: 20,
+                              width: MediaQuery.sizeOf(context).width * 0.08,
                             ),
                             Text(
                               "Sign Up",
@@ -96,14 +108,23 @@ class _SignUpPageState extends State<SignUpPage> {
                         child: Row(
                           children: [
                             SizedBox(
-                              width: 20,
+                              width: MediaQuery.sizeOf(context).width * 0.08,
                             ),
                             CircleAvatar(
                               radius: 15,
                               backgroundColor: Colors.white,
-                              child: Icon(
-                                CupertinoIcons.arrow_left,
-                                size: 20,
+                              child: IconButton(
+                                icon: Icon(
+                                  CupertinoIcons.arrow_left,
+                                  size: 20,
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => LoginPage(),
+                                      ));
+                                },
                               ),
                             ),
                           ],
@@ -118,6 +139,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 key: globalKey,
                 child: Column(children: [
                   TextFormField(
+                    controller: nameController,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(
                             borderRadius:
@@ -130,7 +152,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         )),
                   ),
                   SizedBox(
-                    height: 20,
+                    height: MediaQuery.sizeOf(context).height * 0.03,
                   ),
                   TextFormField(
                     validator: (value) {
@@ -153,7 +175,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         )),
                   ),
                   SizedBox(
-                    height: 20,
+                    height: MediaQuery.sizeOf(context).height * 0.02,
                   ),
                   TextFormField(
                     validator: (value) {
@@ -167,7 +189,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     },
                     controller: passwordController,
                     obscureText: true,
-                    obscuringCharacter: "X",
+                    obscuringCharacter: "*",
                     decoration: InputDecoration(
                         border: OutlineInputBorder(
                             borderRadius:
@@ -180,70 +202,106 @@ class _SignUpPageState extends State<SignUpPage> {
                         )),
                   ),
                   SizedBox(
-                    height: 20,
+                    height: MediaQuery.sizeOf(context).height * 0.02,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(right: 200),
+                    padding: const EdgeInsets.only(right: 0),
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(12)),
                           color: Color.fromARGB(255, 45, 113, 169)),
-                      height: 40,
-                      width: 150,
+                      height: MediaQuery.sizeOf(context).height * 0.05,
+                      width: MediaQuery.sizeOf(context).width * 0.6,
                       child: MaterialButton(
                         child: Text(
                           "Sign Up",
                           style: TextStyle(
-                              fontSize: 16,
-                              color: const Color.fromARGB(255, 255, 255, 255),
-                              fontWeight: FontWeight.bold),
+                            fontSize: 16,
+                            color: const Color.fromARGB(255, 255, 255, 255),
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        onPressed: () {
+                        onPressed: () async {
                           if (globalKey.currentState!.validate()) {
-                            auth
-                                .createUserWithEmailAndPassword(
-                                    email: emailController.text.toString(),
-                                    password:
-                                        passwordController.text.toString())
-                                .then(
-                              (value) {
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => LoginPage(),
-                                    ));
-                              },
-                            ).onError(
-                              (error, stackTrace) {
-                                SnackBar(
-                                  content: Text("Login Failed"),
-                                );
-                              },
-                            );
+                            try {
+                              final UserCredential userCredential =
+                                  await auth.createUserWithEmailAndPassword(
+                                      email: emailController.text.toString(),
+                                      password:
+                                          passwordController.text.toString());
+
+                              await userCredential.user!
+                                  .sendEmailVerification();
+                              CollectionReference collRef =
+                                  FirebaseFirestore.instance.collection('User');
+                              collRef.add({
+                                'Name': nameController.text.toString(),
+                                'Email': emailController.text.toString(),
+                                'Password': passwordController.text.toString()
+                              });
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                backgroundColor:
+                                    Color.fromARGB(255, 40, 109, 139),
+                                duration: Duration(milliseconds: 800),
+                                content: Center(
+                                  child: Text(
+                                    "User Created. Check your email for verification.",
+                                    style: TextStyle(
+                                      color: Color.fromARGB(255, 255, 255, 255),
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ));
+
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LoginPage(),
+                                ),
+                              );
+                            } catch (error) {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                backgroundColor:
+                                    Color.fromARGB(255, 70, 115, 161),
+                                duration: Duration(milliseconds: 400),
+                                content: Center(
+                                  child: Text(
+                                    "Sign Up Failed: ${error.toString()}",
+                                    style: TextStyle(
+                                      color: Color.fromARGB(255, 255, 255, 255),
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ));
+                            }
                           }
                         },
                       ),
                     ),
                   ),
                   SizedBox(
-                    height: 20,
+                    height: MediaQuery.sizeOf(context).height * 0.03,
                   ),
                   Container(
-                    width: 363.480712890625,
+                    width: MediaQuery.sizeOf(context).width * 0.8,
                     height: 0.5,
                     decoration: BoxDecoration(
                         color: const Color.fromARGB(255, 109, 109, 109)),
                   ),
                   SizedBox(
-                    height: 20,
+                    height: MediaQuery.sizeOf(context).height * 0.03,
                   ),
                   Container(
-                    width: 363.480712890625,
-                    height: 30,
+                    width: MediaQuery.sizeOf(context).width * 0.8,
+                    height: MediaQuery.sizeOf(context).height * 0.02,
                     child: Row(children: [
-                      SizedBox(
-                        width: 12,
-                      ),
+                      SizedBox(width: MediaQuery.sizeOf(context).width * 0.012),
                       Text("Already Have an Account ? "),
                       GestureDetector(
                           onTap: () {

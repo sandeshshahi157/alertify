@@ -33,5 +33,9 @@ class _MyWidgetState extends State<MyWidget> {
       );
   }
   
-  login() {}
+  login() {
+
+       height: MediaQuery.sizeOf(context).height*0.05,
+                      width: MediaQuery.sizeOf(context).width*0.6,
+  }
 }

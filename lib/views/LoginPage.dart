@@ -72,8 +72,8 @@ class _LoginPageState extends State<LoginPage> {
                   Padding(
                     padding: const EdgeInsets.only(left: 320, top: 290),
                     child: Container(
-                        height: 40,
-                        width: MediaQuery.sizeOf(context).width * 0.2,
+                          height: MediaQuery.sizeOf(context).height*0.05,
+                      width: MediaQuery.sizeOf(context).width*0.6,
                         decoration: BoxDecoration(
                             color: Color.fromARGB(255, 151, 210, 255),
                             borderRadius: BorderRadius.only(
@@ -82,14 +82,24 @@ class _LoginPageState extends State<LoginPage> {
                         child: Row(
                           children: [
                             SizedBox(
-                              width: 20,
+                              
+                      width: MediaQuery.sizeOf(context).width*0.08,
                             ),
                             CircleAvatar(
                               radius: 15,
                               backgroundColor: Colors.white,
-                              child: Icon(
-                                CupertinoIcons.arrow_left,
-                                size: 20,
+                              child: IconButton(
+                                icon: Icon(
+                                  CupertinoIcons.arrow_left,
+                                  size: 20,
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SignUpPage(),
+                                ));
+                                },
                               ),
                             ),
                           ],
@@ -98,7 +108,8 @@ class _LoginPageState extends State<LoginPage> {
                   Padding(
                     padding: const EdgeInsets.only(right: 200, top: 290),
                     child: Container(
-                        height: 40,
+                           height: MediaQuery.sizeOf(context).height*0.05,
+                    
                         width: MediaQuery.sizeOf(context).width * 0.49,
                         decoration: BoxDecoration(
                             color: Color.fromARGB(255, 151, 210, 255),
@@ -108,7 +119,8 @@ class _LoginPageState extends State<LoginPage> {
                         child: Row(
                           children: [
                             SizedBox(
-                              width: 20,
+                         
+                      width: MediaQuery.sizeOf(context).width*0.08,
                             ),
                             Text(
                               "LOGIN",
@@ -116,14 +128,24 @@ class _LoginPageState extends State<LoginPage> {
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             SizedBox(
-                              width: 20,
+      
+                      width: MediaQuery.sizeOf(context).width*0.06,
                             ),
                             CircleAvatar(
                               radius: 15,
                               backgroundColor: Colors.white,
-                              child: Icon(
-                                CupertinoIcons.arrow_left,
-                                size: 20,
+                              child:  IconButton(
+                                icon: Icon(
+                                  CupertinoIcons.arrow_left,
+                                  size: 20,
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SignUpPage(),
+                                ));
+                                },
                               ),
                             ),
                           ],
@@ -158,7 +180,8 @@ class _LoginPageState extends State<LoginPage> {
                         )),
                   ),
                   SizedBox(
-                    height: 30,
+                       height: MediaQuery.sizeOf(context).height*0.03,
+                    
                   ),
                   TextFormField(
                     validator: (value) {
@@ -172,7 +195,7 @@ class _LoginPageState extends State<LoginPage> {
                     },
                     controller: passwordController,
                     obscureText: true,
-                    obscuringCharacter: "X",
+                    obscuringCharacter: "*",
                     decoration: InputDecoration(
                         border: OutlineInputBorder(
                             borderRadius:
@@ -185,16 +208,17 @@ class _LoginPageState extends State<LoginPage> {
                         )),
                   ),
                   SizedBox(
-                    height: 20,
+                      height: MediaQuery.sizeOf(context).height*0.02,
+               
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(right: 200),
+                    padding: const EdgeInsets.only(),
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(12)),
                           color: Color.fromARGB(255, 45, 113, 169)),
-                      height: 40,
-                      width: 150,
+                      height: MediaQuery.sizeOf(context).height*0.05,
+                      width: MediaQuery.sizeOf(context).width*0.6,
                       child: MaterialButton(
                         child: Text(
                           "Login",
@@ -212,6 +236,11 @@ class _LoginPageState extends State<LoginPage> {
                             )
                                 .then(
                               (value) {
+
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                  duration: Duration(milliseconds: 600),
+                                  content: Text("Login Success"),)
+                                );
                                 Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
@@ -231,39 +260,50 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   SizedBox(
-                    height: 12,
+                       height: MediaQuery.sizeOf(context).height*0.03,
+                    
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(right: 200),
+                    padding: const EdgeInsets.only(right: 0),
                     child: GestureDetector(
                         onTap: () async {
                           String email =
-                              emailController.text.toString(); // Replace with the user's email address
+                              emailController.text.toString();
                           await resetPassword(email);
                         },
-                        child: Text(
-                          "Forgot Password ?",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                        child: Container(
+                         
+                          child: Center(
+                            child: Text(
+                              "Forgot Password ?",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
                         )),
                   ),
                   SizedBox(
-                    height: 30,
+                       height: MediaQuery.sizeOf(context).height*0.03,
+
                   ),
                   Container(
-                    width: 363.480712890625,
+                
+                      width: MediaQuery.sizeOf(context).width*0.8,
                     height: 0.5,
                     decoration: BoxDecoration(
                         color: const Color.fromARGB(255, 109, 109, 109)),
                   ),
                   SizedBox(
-                    height: 30,
+                       height: MediaQuery.sizeOf(context).height*0.03,
+                    
                   ),
                   Container(
-                    width: 363.480712890625,
-                    height: 30,
+                    
+                      width: MediaQuery.sizeOf(context).width*0.8,
+                     height: MediaQuery.sizeOf(context).height*0.03,
                     child: Row(children: [
                       SizedBox(
-                        width: 12,
+                     
+                      width: MediaQuery.sizeOf(context).width*0.012,
                       ),
                       Text("Don't Have an Account ? "),
                       GestureDetector(
