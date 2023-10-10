@@ -51,13 +51,8 @@ class _SetNotificationState extends State<SetNotification> {
 
   @override
   Widget build(BuildContext context) {
-    const List<String> list = <String>[
-      '1 Day ',
-      ' 2 Day ',
-      '3 Day ',
-      '4 Day ',
-    ];
-    String dropdownValue = list.first;
+    List<String> options = ['Option 1', 'Option 2', 'Option 3'];
+    String dropdownValue = options.first;
 
     return Scaffold(
       appBar: AppBar(
@@ -147,7 +142,6 @@ class _SetNotificationState extends State<SetNotification> {
                             SizedBox(
                               height: 12,
                             ),
-                          
                             Padding(
                               padding: const EdgeInsets.all(20.0),
                               child: TextFormField(
@@ -156,45 +150,63 @@ class _SetNotificationState extends State<SetNotification> {
                                     InputDecoration(hintText: "Task here"),
                               ),
                             ),
-                           
                             Padding(
                               padding: const EdgeInsets.all(12.0),
                               child: Container(
-                                decoration: BoxDecoration(
-                                    color: Color.fromARGB(144, 255, 255, 255),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(12))),
-                                child: ListTile(
-                                  leading: Icon(Icons.date_range),
-                                  title: Text("Repeat"),
-                                  trailing: DropdownButton<String>(
-                                    value: dropdownValue,
-                                    icon: const Icon(
-                                      Icons.arrow_drop_down,
-                                      size: 50,
-                                    ),
-                                    elevation: 16,
-                                    style: const TextStyle(
-                                        color: Color.fromARGB(255, 0, 0, 0)),
-                                    onChanged: (String? value) {
-                                      setState(() {
-                                        dropdownValue = value!;
-                                      });
-                                    },
-                                    items: list.map<DropdownMenuItem<String>>(
-                                        (String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Container(
-                                            decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(30))),
-                                            child: Text(value)),
-                                      );
-                                    }).toList(),
-                                  ),
-                                ),
-                              ),
+                                  height:
+                                      MediaQuery.sizeOf(context).height * 0.056,
+                                  width: MediaQuery.sizeOf(context).width,
+                                  decoration: BoxDecoration(
+                                      color: Color.fromARGB(144, 255, 255, 255),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(6))),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 12,
+                                      ),
+                                      Icon(
+                                        Icons.calendar_month,
+                                        size: 30,
+                                        color: Colors.black,
+                                      ),
+                                      SizedBox(
+                                        width: 40,
+                                      ),
+                                      Text(
+                                        "Repeat",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(
+                                        width: 102,
+                                      ),
+                                      DropdownButton(
+                                        value: dropdownValue,
+                                        icon: const Icon(Icons.arrow_drop_down),
+                                        iconSize: 24,
+                                        elevation: 16,
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 18,
+                                        ),
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            dropdownValue = newValue!;
+                                          });
+                                        },
+                                        items: options
+                                            .map<DropdownMenuItem<String>>(
+                                          (String value) {
+                                            return DropdownMenuItem<String>(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          },
+                                        ).toList(),
+                                      ),
+                                    ],
+                                  )),
                             ),
                             Padding(
                               padding:
@@ -223,7 +235,7 @@ class _SetNotificationState extends State<SetNotification> {
                                   ),
                                 ),
                               ),
-                            )
+                            ),
                           ]),
                         )
                       ],
@@ -280,8 +292,7 @@ class _SetNotificationState extends State<SetNotification> {
               size: 35,
             ),
             onPressed: () {
-
-                Navigator.push(context,
+              Navigator.push(context,
                   MaterialPageRoute(builder: (context) => GradeReport()));
             },
           )
