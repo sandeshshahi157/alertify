@@ -7,6 +7,7 @@ import 'package:alertify/views/gradereport.dart';
 import 'package:alertify/views/resetpassword.dart';
 
 import 'package:alertify/views/setNotification.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:flutter/material.dart';
@@ -22,7 +23,7 @@ TextEditingController semester = TextEditingController();
 TextEditingController examType = TextEditingController();
 TextEditingController cgpa = TextEditingController();
 bool _switchValue = true;
-bool _switchvalue =false;
+bool _switchvalue = false;
 
 class _ProfilePageState extends State<ProfilePage> {
   int _currentindex = 0;
@@ -51,7 +52,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   Padding(
                     padding: const EdgeInsets.only(left: 5, top: 47),
                     child: IconButton(
-                      icon: Icon(isadd ? Icons.arrow_back : Icons.person_2_outlined),
+                      icon: Icon(
+                          isadd ? Icons.arrow_back : Icons.person_2_outlined),
                       onPressed: () {
                         setState(() {
                           _currentindex = 0;
@@ -100,16 +102,16 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 250,left: 50,right: 50),
+                    padding:
+                        const EdgeInsets.only(top: 250, left: 50, right: 50),
                     child: Container(
-                     
-                        width: MediaQuery.sizeOf(context).width*0.9,
-                        height: MediaQuery.sizeOf(context).height * 0.1,
+                      width: MediaQuery.sizeOf(context).width * 0.9,
+                      height: MediaQuery.sizeOf(context).height * 0.1,
                       child: Center(
                         child: Text(
                           "User Name",
-                          style:
-                              TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
@@ -132,134 +134,36 @@ class _ProfilePageState extends State<ProfilePage> {
                                         BorderRadius.all(Radius.circular(20)),
                                     color: Color.fromARGB(255, 235, 235, 235)),
                                 child: Padding(
-                                  padding: const EdgeInsets.only(top: 50),
-                                  child: Column(children: [
-                                    Container(
-                                      height: 40,
-                                      width: MediaQuery.sizeOf(context).width *
-                                          0.9,
-                                      child: Row(children: [
-                                        Text(
-                                          "Email: ",
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        SizedBox(
-                                          width: 30,
-                                        ),
-                                        Text(
-                                          "name@123435@gmail.com ",
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                      ]),
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Container(
-                                        color: Colors.black,
-                                        height: 1,
-                                        width:
-                                            MediaQuery.sizeOf(context).width *
-                                                0.9),
-                                    Container(
-                                      height: 40,
-                                      width: MediaQuery.sizeOf(context).width *
-                                          0.9,
-                                      child: Row(children: [
-                                        Text(
-                                          "Semester: ",
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        SizedBox(
-                                          width: 30,
-                                        ),
-                                        Text(
-                                          "Sem - 5",
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                      ]),
-                                    ),
-                                    SizedBox(
-                                      height: 12,
-                                    ),
-                                    Container(
-                                        color: Colors.black,
-                                        height: 1,
-                                        width:
-                                            MediaQuery.sizeOf(context).width *
-                                                0.9),
-                                    Container(
-                                      height: 40,
-                                      width: MediaQuery.sizeOf(context).width *
-                                          0.9,
-                                      child: Row(children: [
-                                        Text(
-                                          "Branch: ",
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        SizedBox(
-                                          width: 30,
-                                        ),
-                                        Text(
-                                          "B-Tech Computer Engineering ",
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                      ]),
-                                    ),
-                                    SizedBox(
-                                      height: 12,
-                                    ),
-                                    Container(
-                                        color: Colors.black,
-                                        height: 1,
-                                        width:
-                                            MediaQuery.sizeOf(context).width *
-                                                0.9),
-                                    Container(
-                                      height: 40,
-                                      width: MediaQuery.sizeOf(context).width *
-                                          0.9,
-                                      child: Row(children: [
-                                        Text(
-                                          "Total Subject: ",
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        SizedBox(
-                                          width: 30,
-                                        ),
-                                        Text(
-                                          "9 ",
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                      ]),
-                                    ),
-                                    SizedBox(
-                                      height: 12,
-                                    ),
-                                    Container(
-                                        color: Colors.black,
-                                        height: 1,
-                                        width:
-                                            MediaQuery.sizeOf(context).width *
-                                                0.9),
-                                  ]),
-                                ))))),
+                                    padding: const EdgeInsets.only(top: 50),
+                                     child:
+                                    StreamBuilder(
+                                      stream: FirebaseFirestore.instance
+                                          .collection('User')
+                                          .snapshots(), // 'users' is the name of the collection
+                                      builder: (context, snapshot) {
+                                        if (!snapshot.hasData) {
+                                          return CircularProgressIndicator(); // Display a loading spinner
+                                        }
+                                        final documents = snapshot.data?.docs; // List of document snapshots
+
+                                        return ListView.builder(
+                                          itemCount: documents?.length,
+                                          itemBuilder: (context, index) {
+                                            final document = documents?[index];
+                                            final data = document?.data()
+                                                as Map<String, dynamic>;
+                                            final username = data['FullName'];
+                                            final branch = data['Branch'];
+
+                                            return ListTile(
+                                              title:
+                                                  Text('Full Name: $username'),
+                                              subtitle: Text('Branch: $branch'),
+                                            );
+                                          },
+                                        );
+                                      },
+                                    )))))),
                 Visibility(
                     child: Container(
                   width: MediaQuery.sizeOf(context).width,
@@ -285,9 +189,9 @@ class _ProfilePageState extends State<ProfilePage> {
                             fontSize: 20, fontWeight: FontWeight.w700),
                       ),
                     ),
-
-
-                    SizedBox(height: 20,),
+                    SizedBox(
+                      height: 20,
+                    ),
                     ListTile(
                       trailing: CupertinoSwitch(
                         value: _switchValue,
@@ -308,11 +212,16 @@ class _ProfilePageState extends State<ProfilePage> {
                             fontSize: 20, fontWeight: FontWeight.w700),
                       ),
                     ),
-
-                    SizedBox(height: 20,),
+                    SizedBox(
+                      height: 20,
+                    ),
                     ListTile(
                       onTap: () {
-                        Navigator.push(context,MaterialPageRoute(builder: (context) => ResetPassword(),));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ResetPassword(),
+                            ));
                       },
                       leading: Icon(
                         Icons.lock_outlined,
@@ -325,10 +234,16 @@ class _ProfilePageState extends State<ProfilePage> {
                             fontSize: 20, fontWeight: FontWeight.w700),
                       ),
                     ),
-                    SizedBox(height: 20,),
+                    SizedBox(
+                      height: 20,
+                    ),
                     ListTile(
                       onTap: () {
-                        Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => LoginPage(),));
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginPage(),
+                            ));
                       },
                       leading: Icon(
                         Icons.group_add_outlined,
@@ -341,12 +256,17 @@ class _ProfilePageState extends State<ProfilePage> {
                             fontSize: 20, fontWeight: FontWeight.w700),
                       ),
                     ),
-                    SizedBox(height: 20,),
+                    SizedBox(
+                      height: 20,
+                    ),
                     ListTile(
-                       onTap: () {
-                        Navigator.push(context,MaterialPageRoute(builder: (context) => SignUpPage(),));
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SignUpPage(),
+                            ));
                       },
-                     
                       leading: Icon(
                         Icons.logout,
                         color: Colors.black,
